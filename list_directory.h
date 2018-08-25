@@ -18,12 +18,12 @@
 #include<string.h>
 #include<termios.h>
 #include <math.h>
-
+#include "global_variables.h"
 using namespace std;
 
 #ifndef OS_ASSIGNMENT_LIST_DIRECTORY_H
 
-int list_directory(string);
+vector<file_detail> list_directory(char*);
 
 #define OS_ASSIGNMENT_LIST_DIRECTORY_H
 

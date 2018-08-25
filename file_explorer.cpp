@@ -16,58 +16,68 @@
 #include<termios.h>
 #include <math.h>
 #include "list_directory.h"
+#include "global_variables.h"
+#include "raw_input.h"
+
+#define MAX 10000
 
 using namespace std;
 
-struct termios new_settings, initial_settings;
 
-static int getch(void) {
-    int c = 0;
-
-    tcgetattr(0, &initial_settings);
-    memcpy(&new_settings, &initial_settings, sizeof(new_settings));
-    new_settings.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(0, TCSANOW, &new_settings);
-    c = getchar();
-    tcsetattr(0, TCSANOW, &initial_settings);
-    return c;
+/*vector<file_detail> print_formatted_directory(string pathname) {
+    printf("\033c");
+    int no_of_entries;
+    vector<file_detail> file_details;
+    file_details =  list_directory(pathname);
+    printf("\033[%dA", no_of_entries);
+    return file_details;
+}
+*/
+void clrscrn() {
+    printf("\033c");
 }
 
 int main()
 {
-    printf("\033c");
+    clrscrn();
     int no_of_entries;
-    string pathname = ".";
-    no_of_entries =  list_directory(pathname);
+    int c;
+    vector<file_detail> file_details;
+    //char* directory = "./temp";
+    file_details = list_directory(curr_dir);
+    no_of_entries = file_details.size();
+    //cout << file_details.size() <<"\n";
     printf("\033[%dA", no_of_entries);
 
-    int c, c2, c3;
-    int cursor_pos = 0;
+
     while(1) {
         //     tcsetattr(0, TCSANOW, &new_settings);
 
-        c = getch();
-        if (c == 27) {
-            c2 = getch();
-            if(c2 == 91) {
-                c3 = getch();
-                if(c3 == 65 && cursor_pos > 0) {
-                    printf("\033[%dA", (1));
-                    cursor_pos--;
-                    //tcsetattr(0, TCSANOW, &new_settings);
-                }
-                else if(c3 == 66 && cursor_pos < no_of_entries - 1) {
-                    printf("\033[%dB", (1));
-                    cursor_pos++;
-                    //tcsetattr(0, TCSANOW, &new_settings);
-                }
+        c = kbget();
 
-            }
+        if (c == KEY_UP && cursor_pos > 0) {
+            cursorupward(1);
+            cursor_pos--;
         }
+        else if(c == KEY_DOWN && cursor_pos < no_of_entries - 1) {
+            cursordownward(1);
+            cursor_pos++;
+        }
+        else if(c == KEY_ENTER) {
+            //tcsetattr (STDIN_FILENO, TCSAFLUSH, &initial_settings);
+            char new_directory[MAX];
+            strcpy(new_directory, curr_dir);
+            strcat(new_directory, "/");
+            strcat(new_directory, file_details[cursor_pos].name);
+            curr_dir = new_directory;
+            clrscrn();
+            file_details = list_directory(curr_dir);
+            no_of_entries = file_details.size();
+            //cout << file_details.size() <<"\n";
+            printf("\033[%dA", no_of_entries);
+            cursor_pos = 0;
+            continue;
 
-        else if(c =='q') {
-            tcsetattr (STDIN_FILENO, TCSAFLUSH, &initial_settings);
-            break;
         }
 
     }

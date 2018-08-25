@@ -3,39 +3,45 @@
 //
 
 #include "list_directory.h"
-#include <string>
+#include "global_variables.h"
+//#include <string>
+#include <string.h>
 
 using namespace std;
 
-int list_directory(string pathname) {
+
+vector<file_detail> list_directory(char* pathname) {
+    vector<file_detail> file_names;
     string dir = string(pathname);
     struct dirent **file_list;
     int no_of_entries;
-    no_of_entries = scandir(".", &file_list, NULL, alphasort);
-    if(no_of_entries == -1){
+    no_of_entries = scandir(pathname, &file_list, NULL, alphasort);
+    if (no_of_entries == -1) {
         perror("scandir");
         exit(EXIT_FAILURE);
     }
-    for(long long i = 0; i < no_of_entries; i++) {
+    for (long long i = 0; i < no_of_entries; i++) {
         printf("%-35s ", file_list[i]->d_name);
+        file_names.push_back(file_detail());
+        file_names[i].index = i;
+        file_names[i].name = file_list[i]->d_name;
+
         struct stat file_stats;
-        struct passwd  *pwd;
-        struct group   *grp;
-        struct tm      *tm;
+        struct passwd *pwd;
+        struct group *grp;
 
-        if(stat(file_list[i]->d_name, &file_stats) == -1)
-            continue;                                                      //error checking possile
-        long long size = (long long)file_stats.st_size;
-        if(size < 1024)
+        if (stat(file_list[i]->d_name, &file_stats) == -1)
+            //cout << "not";
+        file_names[i].isdir = S_ISDIR(file_stats.st_mode);
+        long long size = (long long) file_stats.st_size;
+        if (size < 1024)
             printf("%-4lld ", size);
-        else if((size / 1024.0) < 1024) {
-            printf("%-4.1fK", (size / 1024.0) );
+        else if ((size / 1024.0) < 1024) {
+            printf("%-4.1fK", (size / 1024.0));
 
-        }
-        else if((size / (1024 * 1024)) < 1024) {
+        } else if ((size / (1024 * 1024)) < 1024) {
             printf("%-10.1fM ", size / (1024.0 * 1024.0));
-        }
-        else if((size / (1024 * 1024 * 1024)) < 1024) {
+        } else if ((size / (1024 * 1024 * 1024)) < 1024) {
             printf("%-10.1fG ", size / (1024.0 * 1024.0 * 1024.0));
         }
 
@@ -78,5 +84,5 @@ int list_directory(string pathname) {
         // printf("\n");
 
     }
-    return no_of_entries;
+    return file_names;
 }
