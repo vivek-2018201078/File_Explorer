@@ -6,6 +6,7 @@
 #include "global_variables.h"
 //#include <string>
 #include <string.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -84,5 +85,12 @@ vector<file_detail> list_directory(char* pathname) {
         // printf("\n");
 
     }
+
+
+    //printf("%s\n", get_current_dir_name());
+    /*for(int i = 0 ; i  < path_history.size() ; i++) {
+        printf("%s   ", path_history[i]);
+    }*/
+    printf("Current Directory : %s\n", curr_dir);
     return file_names;
 }

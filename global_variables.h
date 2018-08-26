@@ -4,6 +4,7 @@
 #include <termios.h>
 #include <string>
 #include <string.h>
+#include <vector>
 using namespace std;
 
 #ifndef OS_ASSIGNMENT_GLOBAL_VARIABLES_H
@@ -17,6 +18,8 @@ typedef struct file_detail_struc {
     int index;
     int isdir;
 }file_detail;
+extern int path_history_index;
+extern char* home_dir;
 
 
 #endif //OS_ASSIGNMENT_GLOBAL_VARIABLES_H

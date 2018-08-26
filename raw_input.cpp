@@ -71,6 +71,10 @@ int kbget(void)
     int c;
 
     c = getch();
+    if(c == 127) {
+        return c;
+
+    }
     return (c == KEY_ESCAPE) ? kbesc() : c;
 }
 

@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <vector>
 #include <string>
+#include <stack>
 #include <iostream>
 #include <unistd.h>
 #include <pwd.h>
@@ -23,6 +24,8 @@
 
 using namespace std;
 
+stack <char*> left_st;
+stack <char*> right_st;
 
 /*vector<file_detail> print_formatted_directory(string pathname) {
     printf("\033c");
@@ -37,6 +40,20 @@ void clrscrn() {
     printf("\033c");
 }
 
+void deleteEnd (char* myStr){
+
+    printf ("%s\n", myStr);
+    char *del = &myStr[strlen(myStr)];
+
+    while (del > myStr && *del != '/')
+        del--;
+
+    if (*del== '/')
+        *del= '\0';
+
+    return;
+}
+
 int main()
 {
     clrscrn();
@@ -45,16 +62,18 @@ int main()
     vector<file_detail> file_details;
     //char* directory = "./temp";
     file_details = list_directory(curr_dir);
+    left_st.push(curr_dir);
     no_of_entries = file_details.size();
     //cout << file_details.size() <<"\n";
-    printf("\033[%dA", no_of_entries);
+    printf("\033[%dA", no_of_entries + 1);
 
 
-    while(1) {
+    while(1) {  
         //     tcsetattr(0, TCSANOW, &new_settings);
 
         c = kbget();
-
+        char* curr_push_left;
+        char* curr_right_push;
         if (c == KEY_UP && cursor_pos > 0) {
             cursorupward(1);
             cursor_pos--;
@@ -66,19 +85,97 @@ int main()
         else if(c == KEY_ENTER) {
             //tcsetattr (STDIN_FILENO, TCSAFLUSH, &initial_settings);
             char new_directory[MAX];
-            strcpy(new_directory, curr_dir);
-            strcat(new_directory, "/");
-            strcat(new_directory, file_details[cursor_pos].name);
-            curr_dir = new_directory;
+            if(cursor_pos == 0) {
+                continue;
+            }
+            if(cursor_pos == 1) {
+                if(strcmp(home_dir, curr_dir) != 0) {
+                    deleteEnd(curr_dir);
+                    char *temp = (char*)malloc(strlen(curr_dir));
+                    strcpy(temp, curr_dir);
+                    left_st.push(temp);
+                    curr_push_left = temp;
+                }
+            }
+            else {
+                strcpy(new_directory, curr_dir);
+                strcat(new_directory, "/");
+                strcat(new_directory, file_details[cursor_pos].name);
+                curr_dir = new_directory;
+                char *temp = (char*)malloc(strlen(curr_dir));
+                strcpy(temp, curr_dir);
+                left_st.push(temp);
+                curr_push_left = temp;
+            }
             clrscrn();
             file_details = list_directory(curr_dir);
+            //printf(" left push= %s", curr_push_left);
             no_of_entries = file_details.size();
-            //cout << file_details.size() <<"\n";
-            printf("\033[%dA", no_of_entries);
+            //printf("here");
+            printf("\033[%dA", no_of_entries + 1);
             cursor_pos = 0;
             continue;
 
+        } else if (c == KEY_RIGHT) {   //// THIS IS ACTUALLY LEFT CHECK LATER
+            if(!left_st.empty()) {
+                //printf("here");
+                right_st.push(left_st.top());
+                curr_right_push = left_st.top();
+                //if(strcmp(left_st.top(),home_dir) != 0)
+                left_st.pop();
+                if(!left_st.empty()) {
+                    curr_dir = left_st.top();
+                } else
+                    curr_dir= home_dir;
+                clrscrn();
+                //printf("go to :%s\n", curr_dir);
+                file_details = list_directory(curr_dir);
+              //  printf(" right push in left key = %s", curr_right_push);
+                no_of_entries = file_details.size();
+                printf("\033[%dA", no_of_entries + 1);
+                cursor_pos = 0;
+                continue;
+            }
+        } else if (c == KEY_LEFT) {
+            int t = 0;
+            char* top;
+            if(!right_st.empty()) {
+                left_st.push(right_st.top());
+                if(!right_st.empty()) {
+                    t = 1;
+                    top = right_st.top();
+                    curr_dir = right_st.top();
+                }
+                right_st.pop();
+                clrscrn();
+                //printf("go to :%s\n", curr_dir);
+                file_details = list_directory(curr_dir);
+                //printf(" right top %s", top);
+                no_of_entries = file_details.size();
+                printf("\033[%dA", no_of_entries + 1);
+                cursor_pos = 0;
+                continue;
+
+            }
+        } else if(c == 127) {
+            if(strcmp(home_dir, curr_dir) != 0) {
+                deleteEnd(curr_dir);
+                char *temp = (char*)malloc(strlen(curr_dir));
+                strcpy(temp, curr_dir);
+                left_st.push(temp);
+                curr_push_left = temp;
+            }
+            clrscrn();
+            //printf("here");
+            //printf("go to :%s\n", curr_dir);
+            file_details = list_directory(curr_dir);
+            //printf(" right top %s", top);
+            no_of_entries = file_details.size();
+            printf("\033[%dA", no_of_entries + 1);
+            cursor_pos = 0;
+            continue;
         }
+
 
     }
     return 0;

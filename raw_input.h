@@ -17,6 +17,7 @@
 #define KEY_DOWN    0x0106
 #define KEY_LEFT    0x0107
 #define KEY_RIGHT   0x0108
+#define KEY_BACKSPACE 0X0008
 
 int getch(void);
 int kbhit(void);
