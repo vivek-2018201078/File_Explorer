@@ -68,7 +68,7 @@ int main()
     printf("\033[%dA", no_of_entries + 1);
 
 
-    while(1) {  
+    while(1) {
         //     tcsetattr(0, TCSANOW, &new_settings);
 
         c = kbget();
@@ -81,41 +81,58 @@ int main()
         else if(c == KEY_DOWN && cursor_pos < no_of_entries - 1) {
             cursordownward(1);
             cursor_pos++;
-        }
-        else if(c == KEY_ENTER) {
-            //tcsetattr (STDIN_FILENO, TCSAFLUSH, &initial_settings);
+        } else if (c == KEY_ENTER) {
             char new_directory[MAX];
-            if(cursor_pos == 0) {
-                continue;
-            }
-            if(cursor_pos == 1) {
-                if(strcmp(home_dir, curr_dir) != 0) {
-                    deleteEnd(curr_dir);
-                    char *temp = (char*)malloc(strlen(curr_dir));
+            char fork_temp[MAX];
+            if ((file_details[cursor_pos].isdir)) {
+                //tcsetattr (STDIN_FILENO, TCSAFLUSH, &initial_settings);
+
+                if (cursor_pos == 0) {
+                    continue;
+                }
+                if (cursor_pos == 1) {
+                    if (strcmp(home_dir, curr_dir) != 0) {
+                        deleteEnd(curr_dir);
+                        char *temp = (char *) malloc(strlen(curr_dir));
+                        strcpy(temp, curr_dir);
+                        left_st.push(temp);
+                        curr_push_left = temp;
+                    }
+                } else {
+                    strcpy(new_directory, curr_dir);
+                    strcat(new_directory, "/");
+                    strcat(new_directory, file_details[cursor_pos].name);
+                    curr_dir = new_directory;
+                    char *temp = (char *) malloc(strlen(curr_dir));
                     strcpy(temp, curr_dir);
                     left_st.push(temp);
                     curr_push_left = temp;
                 }
-            }
-            else {
-                strcpy(new_directory, curr_dir);
-                strcat(new_directory, "/");
-                strcat(new_directory, file_details[cursor_pos].name);
-                curr_dir = new_directory;
-                char *temp = (char*)malloc(strlen(curr_dir));
-                strcpy(temp, curr_dir);
-                left_st.push(temp);
-                curr_push_left = temp;
-            }
-            clrscrn();
-            file_details = list_directory(curr_dir);
-            //printf(" left push= %s", curr_push_left);
-            no_of_entries = file_details.size();
-            //printf("here");
-            printf("\033[%dA", no_of_entries + 1);
-            cursor_pos = 0;
-            continue;
+                clrscrn();
+                file_details = list_directory(curr_dir);
+                //printf(" left push= %s", curr_push_left);
+                no_of_entries = file_details.size();
+                //printf("here");
+                printf("\033[%dA", no_of_entries + 1);
+                cursor_pos = 0;
+                continue;
 
+            }
+
+            else {
+                strcpy(fork_temp, curr_dir);
+                strcat(fork_temp, "/");
+                strcat(fork_temp, file_details[cursor_pos].name);
+
+                pid_t pid;
+                pid = fork();
+                if(pid == 0) {
+                    execl("/usr/bin/xdg-open","xdg-open",fork_temp,(char*)0);
+                }
+
+                //    deleteEnd(curr_dir);
+
+            }
         } else if (c == KEY_RIGHT) {   //// THIS IS ACTUALLY LEFT CHECK LATER
             if(!left_st.empty()) {
                 //printf("here");

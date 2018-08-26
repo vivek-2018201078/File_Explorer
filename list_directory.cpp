@@ -13,7 +13,7 @@ using namespace std;
 
 vector<file_detail> list_directory(char* pathname) {
     vector<file_detail> file_names;
-    string dir = string(pathname);
+    //string dir = string(pathname);
     struct dirent **file_list;
     int no_of_entries;
     no_of_entries = scandir(pathname, &file_list, NULL, alphasort);
@@ -30,10 +30,17 @@ vector<file_detail> list_directory(char* pathname) {
         struct stat file_stats;
         struct passwd *pwd;
         struct group *grp;
+        //printf(" pathname = %s ", pathname);
+        char stat_path[1000];
+        strcpy(stat_path, pathname);
+        strcat(stat_path, "/");
+        strcat(stat_path, file_names[i].name);
+        if(stat(stat_path, &file_stats) == -1) {
+           printf("path =  %s ", stat_path);
+        }
 
-        if (stat(file_list[i]->d_name, &file_stats) == -1)
-            //cout << "not";
         file_names[i].isdir = S_ISDIR(file_stats.st_mode);
+        printf("isdir = %d ", file_names[i].isdir);
         long long size = (long long) file_stats.st_size;
         if (size < 1024)
             printf("%-4lld ", size);
@@ -91,6 +98,7 @@ vector<file_detail> list_directory(char* pathname) {
     /*for(int i = 0 ; i  < path_history.size() ; i++) {
         printf("%s   ", path_history[i]);
     }*/
+    //printf(" %s ",get_current_dir_name());
     printf("Current Directory : %s\n", curr_dir);
     return file_names;
 }
