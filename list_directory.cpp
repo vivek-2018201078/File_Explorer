@@ -40,12 +40,12 @@ vector<file_detail> list_directory(char* pathname) {
         }
 
         file_names[i].isdir = S_ISDIR(file_stats.st_mode);
-        printf("isdir = %d ", file_names[i].isdir);
+        //printf("isdir = %d ", file_names[i].isdir);
         long long size = (long long) file_stats.st_size;
         if (size < 1024)
-            printf("%-4lld ", size);
+            printf("%-5lld ", size);
         else if ((size / 1024.0) < 1024) {
-            printf("%-4.1fK", (size / 1024.0));
+            printf("%-5.1fK", (size / 1024.0));
 
         } else if ((size / (1024 * 1024)) < 1024) {
             printf("%-10.1fM ", size / (1024.0 * 1024.0));

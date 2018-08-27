@@ -128,12 +128,35 @@ int main()
                 pid = fork();
                 if(pid == 0) {
                     execl("/usr/bin/xdg-open","xdg-open",fork_temp,(char*)0);
+                    //deleteEnd(fork_temp);
+                }
+                else {
+                    if (strcmp(home_dir, curr_dir) != 0) {
+                        deleteEnd(curr_dir);
+                        char *temp = (char *) malloc(strlen(curr_dir));
+                        strcpy(temp, curr_dir);
+                        //left_st.push(temp);
+                        curr_push_left = temp;
+                    }
+                    clrscrn();
+                    file_details = list_directory(curr_dir);
+                    //printf(" left push= %s", curr_push_left);
+                    no_of_entries = file_details.size();
+                    //printf("here");
+                    printf("\033[%dA", no_of_entries + 1);
+                    printf("\033[%dB", cursor_pos);
+                    //printf("\033[%dB", cursor_pos);
+                    //cursor_pos = 0;
+                    continue;
+
                 }
 
-                //    deleteEnd(curr_dir);
 
+                //deleteEnd(fork_temp);
             }
         } else if (c == KEY_RIGHT) {   //// THIS IS ACTUALLY LEFT CHECK LATER
+            if(curr_dir == home_dir)
+                continue;
             if(!left_st.empty()) {
                 //printf("here");
                 right_st.push(left_st.top());
