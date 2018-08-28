@@ -10,6 +10,7 @@ using namespace std;
 #ifndef OS_ASSIGNMENT_GLOBAL_VARIABLES_H
 #define OS_ASSIGNMENT_GLOBAL_VARIABLES_H
 
+extern const int total_no_of_possible_lines;
 extern struct termios new_settings, initial_settings;
 extern int cursor_pos;
 extern char* curr_dir;
@@ -22,6 +23,8 @@ typedef struct file_detail_struc {
 }file_detail;
 extern int path_history_index;
 extern char* home_dir;
-
+extern int left_file_index;      //start of scrolling file
+extern int right_file_index;     //end of scrolling
+extern int no_of_entries;
 
 #endif //OS_ASSIGNMENT_GLOBAL_VARIABLES_H

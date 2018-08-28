@@ -57,7 +57,6 @@ void deleteEnd (char* myStr){
 int main()
 {
     clrscrn();
-    int no_of_entries;
     int c;
     vector<file_detail> file_details;
     //char* directory = "./temp";
@@ -74,18 +73,14 @@ int main()
         c = kbget();
         char* curr_push_left;
         char* curr_right_push;
-        if (c == KEY_UP && cursor_pos > 0) {
-            cursorupward(1);
-            cursor_pos--;
-        }
-        else if(c == KEY_DOWN && cursor_pos < no_of_entries - 1) {
-            cursordownward(1);
-            cursor_pos++;
-        } else if (c == KEY_ENTER) {
+
+
+        if (c == KEY_ENTER) {
             char new_directory[MAX];
             if ((file_details[cursor_pos].isdir)) {
                 //tcsetattr (STDIN_FILENO, TCSAFLUSH, &initial_settings);
-
+                left_file_index = 0;
+                right_file_index = 34;
                 if (cursor_pos == 0) {
                     continue;
                 }
@@ -112,6 +107,7 @@ int main()
                 //printf(" left push= %s", curr_push_left);
                 no_of_entries = file_details.size();
                 //printf("here");
+                //printf("left = %d right = %d entries = %d", left_file_index, right_file_index, no_of_entries);
                 printf("\033[%dA", no_of_entries + 1);
                 cursor_pos = 0;
                 continue;
@@ -131,21 +127,27 @@ int main()
                     //deleteEnd(fork_temp);
                 }
                 else {
-                    if (strcmp(home_dir, curr_dir) != 0) {
-                        if(!left_key_access || !right_key_access)
-                            deleteEnd(curr_dir);
-                        //char *temp = (char *) malloc(strlen(curr_dir));
-                        //strcpy(temp, curr_dir);
-                        //left_st.push(temp);
-                        //curr_push_left = temp;
-                    }
+                    if (left_key_access == 0 && right_key_access == 0)
+                        deleteEnd(curr_dir);
+
                     clrscrn();
+                    //left_file_index = 0;
+                    //right_file_index = 34;
                     file_details = list_directory(curr_dir);
                     //printf(" left push= %s", curr_push_left);
                     no_of_entries = file_details.size();
                     //printf("here");
-                    printf("\033[%dA", no_of_entries + 1);
-                    printf("\033[%dB", cursor_pos);
+                    //printf("\033[%dA", 34);
+                    if (cursor_pos > right_file_index) {
+                        //printf("\033[%dB", right_file_index);
+                        printf("\033[%dA", 100);
+                        //printf("\")
+                    }
+                    else{
+                        printf("\033[%dA", 34);
+                        printf("\033[%dB", cursor_pos);
+                    }
+
                     //printf("\033[%dB", cursor_pos);
                     //cursor_pos = 0;
                     continue;
@@ -155,8 +157,13 @@ int main()
 
                 //deleteEnd(fork_temp);
             }
-        } else if (c == KEY_RIGHT) {   //// THIS IS ACTUALLY LEFT CHECK LATER
+        }
+        else if (c == KEY_RIGHT) {   //// THIS IS ACTUALLY LEFT CHECK LATER
             left_key_access = 1;
+            left_file_index = 0;
+            right_file_index = 34;
+            //left_key_access = 0;
+            //right_key_access = 1;
             if(curr_dir == home_dir)
                 continue;
             if(!left_st.empty()) {
@@ -178,8 +185,13 @@ int main()
                 cursor_pos = 0;
                 continue;
             }
-        } else if (c == KEY_LEFT) {
+        }
+        else if (c == KEY_LEFT) {
             right_key_access = 1;
+            left_file_index = 0;
+            right_file_index = 34;
+            //left_key_access = 0;
+            //right_key_access = 34;
             int t = 0;
             char* top;
             if(!right_st.empty()) {
@@ -200,7 +212,12 @@ int main()
                 continue;
 
             }
-        } else if(c == 127) {
+        }
+        else if(c == 127) {
+            left_key_access = 1;
+            left_file_index = 0;
+            right_file_index = 34;
+            //right_key_access = 34;
             if(strcmp(home_dir, curr_dir) != 0) {
                 deleteEnd(curr_dir);
                 char *temp = (char*)malloc(strlen(curr_dir));
@@ -217,6 +234,45 @@ int main()
             printf("\033[%dA", no_of_entries + 1);
             cursor_pos = 0;
             continue;
+        }
+        else if (c == KEY_UP) {
+            if(cursor_pos == 0){
+                ;
+            }
+            else if (cursor_pos > left_file_index) {
+                cursorupward(1);
+                cursor_pos--;
+            }
+            else {
+                left_file_index--;
+                right_file_index--;
+                clrscrn();
+                file_details = list_directory(curr_dir);
+                cursor_pos--;
+                //printf("in up - left = %d right = %d entries = %d cursor_pos = %d", left_file_index, right_file_index, no_of_entries, cursor_pos);
+                printf("\033[%dA", 36);
+
+            }
+        }
+        else if(c == KEY_DOWN && cursor_pos < no_of_entries - 1) {
+            if (cursor_pos <= 33) {
+                cursordownward(1);
+                cursor_pos++;
+            }
+            else {
+                if(right_file_index < no_of_entries - 1){
+                        cursor_pos++;
+                        left_file_index++;
+                        right_file_index++;
+                    }
+                    clrscrn();
+                    file_details = list_directory(curr_dir);
+                    //printf("in down - left = %d right = %d entries = %d cursor_pos = %d", left_file_index, right_file_index, no_of_entries, cursor_pos);
+                    printf("\033[%dA", 2);
+
+
+
+            }
         }
 
 

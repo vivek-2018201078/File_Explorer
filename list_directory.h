@@ -25,6 +25,8 @@ using namespace std;
 
 vector<file_detail> list_directory(char*);
 
+void list(vector<file_detail>);
+
 #define OS_ASSIGNMENT_LIST_DIRECTORY_H
 
 #endif //OS_ASSIGNMENT_LIST_DIRECTORY_H

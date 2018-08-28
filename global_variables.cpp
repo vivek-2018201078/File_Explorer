@@ -13,3 +13,7 @@ int path_history_index = 0;
 char* home_dir = ".";
 int left_key_access = 0;
 int right_key_access = 0;
+const int total_no_of_possible_lines = 34;
+int left_file_index = 0;
+int right_file_index = 34;
+int no_of_entries = 0;
