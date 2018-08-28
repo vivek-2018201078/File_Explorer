@@ -13,6 +13,8 @@ using namespace std;
 extern struct termios new_settings, initial_settings;
 extern int cursor_pos;
 extern char* curr_dir;
+extern int left_key_access;
+extern int right_key_access;
 typedef struct file_detail_struc {
     char* name;
     int index;

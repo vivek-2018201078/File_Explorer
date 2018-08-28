@@ -83,7 +83,6 @@ int main()
             cursor_pos++;
         } else if (c == KEY_ENTER) {
             char new_directory[MAX];
-            char fork_temp[MAX];
             if ((file_details[cursor_pos].isdir)) {
                 //tcsetattr (STDIN_FILENO, TCSAFLUSH, &initial_settings);
 
@@ -120,6 +119,7 @@ int main()
             }
 
             else {
+                char fork_temp[MAX];
                 strcpy(fork_temp, curr_dir);
                 strcat(fork_temp, "/");
                 strcat(fork_temp, file_details[cursor_pos].name);
@@ -132,11 +132,12 @@ int main()
                 }
                 else {
                     if (strcmp(home_dir, curr_dir) != 0) {
-                        deleteEnd(curr_dir);
-                        char *temp = (char *) malloc(strlen(curr_dir));
-                        strcpy(temp, curr_dir);
+                        if(!left_key_access || !right_key_access)
+                            deleteEnd(curr_dir);
+                        //char *temp = (char *) malloc(strlen(curr_dir));
+                        //strcpy(temp, curr_dir);
                         //left_st.push(temp);
-                        curr_push_left = temp;
+                        //curr_push_left = temp;
                     }
                     clrscrn();
                     file_details = list_directory(curr_dir);
@@ -155,6 +156,7 @@ int main()
                 //deleteEnd(fork_temp);
             }
         } else if (c == KEY_RIGHT) {   //// THIS IS ACTUALLY LEFT CHECK LATER
+            left_key_access = 1;
             if(curr_dir == home_dir)
                 continue;
             if(!left_st.empty()) {
@@ -177,6 +179,7 @@ int main()
                 continue;
             }
         } else if (c == KEY_LEFT) {
+            right_key_access = 1;
             int t = 0;
             char* top;
             if(!right_st.empty()) {

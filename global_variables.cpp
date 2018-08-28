@@ -11,3 +11,5 @@ int cursor_pos = 0;
 char* curr_dir = ".";
 int path_history_index = 0;
 char* home_dir = ".";
+int left_key_access = 0;
+int right_key_access = 0;
