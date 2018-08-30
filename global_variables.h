@@ -22,9 +22,13 @@ typedef struct file_detail_struc {
     int isdir;
 }file_detail;
 extern int path_history_index;
+extern int mode;                 //mode 0 = normal mode, mode 1 = command mode;
 extern char* home_dir;
 extern int left_file_index;      //start of scrolling file
 extern int right_file_index;     //end of scrolling
 extern int no_of_entries;
+extern int terminal_lines;
+extern int terminal_col;
+extern int cursor_line;
 
 #endif //OS_ASSIGNMENT_GLOBAL_VARIABLES_H

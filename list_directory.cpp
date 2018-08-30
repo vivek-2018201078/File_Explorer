@@ -7,6 +7,7 @@
 //#include <string>
 #include <string.h>
 #include <unistd.h>
+#include "raw_input.h"
 
 using namespace std;
 
@@ -97,7 +98,7 @@ vector<file_detail> list_directory(char* pathname) {
             //right++;
         }
     }
-
+    printf("----------------------------------------------------------------------------------------------------------------\n");
 
     //printf("%s\n", get_current_dir_name());
     /*for(int i = 0 ; i  < path_history.size() ; i++) {
@@ -105,5 +106,8 @@ vector<file_detail> list_directory(char* pathname) {
     }*/
     //printf(" %s ",get_current_dir_name());
     printf("Current Directory : %s\n", curr_dir);
+   // for(int i = 0; i < )
+ //   printf("%*\n", 20);
+    //cursordownward();
     return file_names;
 }

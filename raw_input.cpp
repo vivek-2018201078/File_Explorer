@@ -75,6 +75,10 @@ int kbget(void)
         return c;
 
     }
+    if(c == 58) {
+        return 58;
+    }
+
     return (c == KEY_ESCAPE) ? kbesc() : c;
 }
 

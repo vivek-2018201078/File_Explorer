@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <sys/ioctl.h>
 #include <errno.h>
 #include <vector>
 #include <string>
@@ -27,15 +28,6 @@ using namespace std;
 stack <char*> left_st;
 stack <char*> right_st;
 
-/*vector<file_detail> print_formatted_directory(string pathname) {
-    printf("\033c");
-    int no_of_entries;
-    vector<file_detail> file_details;
-    file_details =  list_directory(pathname);
-    printf("\033[%dA", no_of_entries);
-    return file_details;
-}
-*/
 void clrscrn() {
     printf("\033c");
 }
@@ -56,7 +48,13 @@ void deleteEnd (char* myStr){
 
 int main()
 {
+
+    struct winsize w;
+    ioctl(0, TIOCGWINSZ, &w);
+    terminal_lines = w.ws_row;
+    terminal_col = w.ws_col;
     clrscrn();
+    printf("lines = %d cols = %d", terminal_lines, terminal_col);
     int c;
     vector<file_detail> file_details;
     //char* directory = "./temp";
@@ -64,7 +62,7 @@ int main()
     left_st.push(curr_dir);
     no_of_entries = file_details.size();
     //cout << file_details.size() <<"\n";
-    printf("\033[%dA", no_of_entries + 1);
+    printf("\033[%dA", terminal_lines - cursor_line + 2);
 
 
     while(1) {
@@ -108,8 +106,9 @@ int main()
                 no_of_entries = file_details.size();
                 //printf("here");
                 //printf("left = %d right = %d entries = %d", left_file_index, right_file_index, no_of_entries);
-                printf("\033[%dA", no_of_entries + 1);
+                printf("\033[%dA", terminal_lines - cursor_line + 2);
                 cursor_pos = 0;
+                cursor_line = 0;
                 continue;
 
             }
@@ -122,41 +121,57 @@ int main()
 
                 pid_t pid;
                 pid = fork();
+
+
                 if(pid == 0) {
                     execl("/usr/bin/xdg-open","xdg-open",fork_temp,(char*)0);
+                    exit(0);
                     //deleteEnd(fork_temp);
                 }
-                else {
-                    if (left_key_access == 0 && right_key_access == 0)
-                        deleteEnd(curr_dir);
 
-                    clrscrn();
-                    //left_file_index = 0;
-                    //right_file_index = 34;
-                    file_details = list_directory(curr_dir);
-                    //printf(" left push= %s", curr_push_left);
-                    no_of_entries = file_details.size();
-                    //printf("here");
-                    //printf("\033[%dA", 34);
-                    if (cursor_pos > right_file_index) {
-                        //printf("\033[%dB", right_file_index);
-                        printf("\033[%dA", 100);
-                        //printf("\")
-                    }
-                    else{
-                        printf("\033[%dA", 34);
-                        printf("\033[%dB", cursor_pos);
-                    }
+                if (left_key_access == 0 && right_key_access == 0)
+                    deleteEnd(curr_dir);
 
+                clrscrn();
+                //left_file_index = 0;
+                //right_file_index = 34;
+                file_details = list_directory(curr_dir);
+                //printf(" left push= %s", curr_push_left);
+                no_of_entries = file_details.size();
+                //printf("here");
+                //printf("\033[%dA", 34);
+                if (cursor_pos > 34) {
+                    if(cursor_line == 34) {
+                        printf("\033[%dA", terminal_lines - cursor_line + 1);
+                    }
+                    //printf("\033[%dB", right_file_index);
+                    printf("\033[%dA", terminal_lines - 1);
+                    printf("\033[%dB", cursor_line);
+                    //printf("\")
+                } else {
+                    if(cursor_line == 0) {
+                        printf("\033[%dA", terminal_lines - 1);
+                    }
+                    else if (left_file_index > 0) {
+                        printf("\033[%dA", no_of_entries + 2);
+                        printf("\033[%dB", cursor_line);
+                    }
+                    else {
+                        printf("\033[%dA", terminal_lines - 1);
+                        printf("\033[%dB", cursor_line);
+                    }
                     //printf("\033[%dB", cursor_pos);
-                    //cursor_pos = 0;
-                    continue;
+                }
+
+                //printf("\033[%dB", cursor_pos);
+                //cursor_pos = 0;
+                continue;
 
                 }
 
 
                 //deleteEnd(fork_temp);
-            }
+
         }
         else if (c == KEY_RIGHT) {   //// THIS IS ACTUALLY LEFT CHECK LATER
             left_key_access = 1;
@@ -181,8 +196,9 @@ int main()
                 file_details = list_directory(curr_dir);
               //  printf(" right push in left key = %s", curr_right_push);
                 no_of_entries = file_details.size();
-                printf("\033[%dA", no_of_entries + 1);
+                printf("\033[%dA", no_of_entries + 2);
                 cursor_pos = 0;
+                cursor_line = 0;
                 continue;
             }
         }
@@ -207,8 +223,9 @@ int main()
                 file_details = list_directory(curr_dir);
                 //printf(" right top %s", top);
                 no_of_entries = file_details.size();
-                printf("\033[%dA", no_of_entries + 1);
+                printf("\033[%dA", no_of_entries + 2);
                 cursor_pos = 0;
+                cursor_line = 0;
                 continue;
 
             }
@@ -231,8 +248,9 @@ int main()
             file_details = list_directory(curr_dir);
             //printf(" right top %s", top);
             no_of_entries = file_details.size();
-            printf("\033[%dA", no_of_entries + 1);
+            printf("\033[%dA", no_of_entries + 2);
             cursor_pos = 0;
+            cursor_line = 0;
             continue;
         }
         else if (c == KEY_UP) {
@@ -242,6 +260,7 @@ int main()
             else if (cursor_pos > left_file_index) {
                 cursorupward(1);
                 cursor_pos--;
+                cursor_line--;
             }
             else {
                 left_file_index--;
@@ -249,8 +268,9 @@ int main()
                 clrscrn();
                 file_details = list_directory(curr_dir);
                 cursor_pos--;
+                //cursor_line--;
                 //printf("in up - left = %d right = %d entries = %d cursor_pos = %d", left_file_index, right_file_index, no_of_entries, cursor_pos);
-                printf("\033[%dA", 36);
+                printf("\033[%dA", terminal_lines - 1);
 
             }
         }
@@ -258,6 +278,7 @@ int main()
             if (cursor_pos <= 33) {
                 cursordownward(1);
                 cursor_pos++;
+                cursor_line++;
             }
             else {
                 if(right_file_index < no_of_entries - 1){
@@ -268,7 +289,8 @@ int main()
                     clrscrn();
                     file_details = list_directory(curr_dir);
                     //printf("in down - left = %d right = %d entries = %d cursor_pos = %d", left_file_index, right_file_index, no_of_entries, cursor_pos);
-                    printf("\033[%dA", 2);
+                    printf("\033[%dA", 3);
+                    //printf("\033[B");
 
 
 

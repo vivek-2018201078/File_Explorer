@@ -17,3 +17,7 @@ const int total_no_of_possible_lines = 34;
 int left_file_index = 0;
 int right_file_index = 34;
 int no_of_entries = 0;
+int mode = 0;
+int terminal_lines;
+int terminal_col;
+int cursor_line = 0;
