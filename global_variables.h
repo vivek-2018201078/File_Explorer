@@ -31,4 +31,5 @@ extern int terminal_lines;
 extern int terminal_col;
 extern int cursor_line;
 
+
 #endif //OS_ASSIGNMENT_GLOBAL_VARIABLES_H

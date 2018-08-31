@@ -19,7 +19,6 @@ void list(vector<file_detail> file_names) {
 
 vector<file_detail> list_directory(char* pathname) {
     vector<file_detail> file_names;
-    //string dir = string(pathname);
     struct dirent **file_list;
     int no_of_entries;
     no_of_entries = scandir(pathname, &file_list, NULL, alphasort);
@@ -27,6 +26,10 @@ vector<file_detail> list_directory(char* pathname) {
         perror("scandir");
         exit(EXIT_FAILURE);
     }
+    printf("\033[%dB", terminal_lines);
+    printf("------NORMAL MODE------");
+    printf("\r");                         //Move cursor to strt of line
+    printf("\033[%dA", terminal_lines);
     for (long long i = 0; i < no_of_entries; i++) {
         file_names.push_back(file_detail());
         file_names[i].name = file_list[i]->d_name;
@@ -34,7 +37,6 @@ vector<file_detail> list_directory(char* pathname) {
         struct stat file_stats;
         struct passwd *pwd;
         struct group *grp;
-        //printf(" pathname = %s ", pathname);
         char stat_path[1000];
         strcpy(stat_path, pathname);
         strcat(stat_path, "/");
@@ -45,7 +47,6 @@ vector<file_detail> list_directory(char* pathname) {
         file_names[i].isdir = S_ISDIR(file_stats.st_mode);
         if(i >= left_file_index && i <= right_file_index) {
             printf("%-35.20s ", file_list[i]->d_name);
-            //printf("isdir = %d ", file_names[i].isdir);
             long long size = (long long) file_stats.st_size;
             if (size < 1024)
                 printf("%-5lld ", size);
@@ -64,7 +65,6 @@ vector<file_detail> list_directory(char* pathname) {
                 printf(" %-20d", file_stats.st_uid);
 
 
-            /* Print out group name if it is found using getgrgid(). */
             if ((grp = getgrgid(file_stats.st_gid)) != NULL)
                 printf(" %12s       ", grp->gr_name);
             else
@@ -94,20 +94,9 @@ vector<file_detail> list_directory(char* pathname) {
             else
                 printf("-       ");
             printf("%12s", ctime(&file_stats.st_mtime));
-            // printf("\n");
-            //right++;
         }
     }
     printf("----------------------------------------------------------------------------------------------------------------\n");
-
-    //printf("%s\n", get_current_dir_name());
-    /*for(int i = 0 ; i  < path_history.size() ; i++) {
-        printf("%s   ", path_history[i]);
-    }*/
-    //printf(" %s ",get_current_dir_name());
     printf("Current Directory : %s\n", curr_dir);
-   // for(int i = 0; i < )
- //   printf("%*\n", 20);
-    //cursordownward();
     return file_names;
 }

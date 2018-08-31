@@ -21,3 +21,4 @@ int mode = 0;
 int terminal_lines;
 int terminal_col;
 int cursor_line = 0;
+
