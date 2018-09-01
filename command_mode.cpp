@@ -30,13 +30,15 @@ void command_mode() {
         }
         if(c == 127) {
             index = 0;
-            //command_in[index] = '\0';
+            command_in[index] = '\0';
             clrline();
             printf("\r");
             printf(":");
         }
         if(c == KEY_ENTER) {
-            ans = command_exec(command_in);
+            char passed[1000];
+            strcpy(passed, command_in);
+            ans = command_exec(passed);
             if(ans == 1) {
                 clrline();
                 //printf(":");
@@ -47,14 +49,15 @@ void command_mode() {
                 //break;
                 //break;
                 index = 0;
-                //command_in[index] = '\0';
+                command_in[index] = '\0';
             }
             else if(ans == 0){
                 clrline();
                 printf("\r");
+                //printf("%s", command_in);
                 printf("(wrong command or path type again):");
                 index = 0;
-                //command_in[index] = '\0';
+                command_in[index] = '\0';
             }
             //printf("%d", ans);
         }
