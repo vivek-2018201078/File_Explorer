@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "global_variables.h"
+#include <stdio.h>
 
 /*#define COPY            "copy"
 #define MOVE            "move"
@@ -19,15 +20,18 @@
 
 
 int command_exec(char* command_input) {
-    int index = 0;
+    //int index1 = 0;
     char* token;
     char* input = command_input;
-    //printf("%s", command_input);
+    //printf(" %s", command_input);
     vector<char*> all_tokens;
     int length = strlen(command_input);
     while((token = strtok_r(input, " ", &input)))
         all_tokens.push_back(token);
-    //printf(" %s %s %s", all_tokens[0]);
+
+
+    //printf(" %s %s %s", all_tokens[0], all_tokens[1], all_tokens[2]);
+
     if(strcmp(all_tokens[0], "create_file") == 0) {
         //printf(" here");
         if(all_tokens.size() != 3) {
@@ -109,6 +113,24 @@ int command_exec(char* command_input) {
                 return 0;
         }
     }
+
+    if(strcmp(all_tokens[0], "delete_file") == 0) {
+        char to_delete[1000];
+        strcpy(to_delete, absolute_home_path);
+        strcat(to_delete, "/");
+        strcat(to_delete, curr_dir);
+        strcat(to_delete,"/");
+        strcat(to_delete, all_tokens[1]);
+        //printf("%s", to_delete);
+        int ans = remove(to_delete);
+        if(ans == 0)
+            return 1;
+        else
+            return 0;
+
+    }
+    
+
    return 0;
 
 }

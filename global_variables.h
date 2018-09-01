@@ -34,6 +34,7 @@ extern int terminal_lines;
 extern int terminal_col;
 extern int cursor_line;
 extern char* absolute_home_path;
+extern int index1;
 
 
 #endif //OS_ASSIGNMENT_GLOBAL_VARIABLES_H

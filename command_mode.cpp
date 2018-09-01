@@ -14,8 +14,8 @@ void clrline() {
 void command_mode() {
 
     char command_in[MAX];       //command is stored
-    int index = 0;             // index to monitor command line input
     int ans;
+    index1 = 0;
     while(1) {
         //printf("%d", index);
         int c = kbget();
@@ -25,18 +25,17 @@ void command_mode() {
         }
         if(c == KEY_LEFT || c == KEY_RIGHT || c == KEY_UP || c == KEY_DOWN) {
             continue;
-
-
         }
         if(c == 127) {
-            index = 0;
-            command_in[index] = '\0';
+            index1 = 0;
+            command_in[index1] = '\0';
             clrline();
             printf("\r");
             printf(":");
         }
         if(c == KEY_ENTER) {
             char passed[1000];
+            //printf("here");
             strcpy(passed, command_in);
             ans = command_exec(passed);
             if(ans == 1) {
@@ -48,24 +47,25 @@ void command_mode() {
                 //mode = 0;
                 //break;
                 //break;
-                index = 0;
-                command_in[index] = '\0';
+                index1 = 0;
+                //command_in[index] = '\0';
             }
             else if(ans == 0){
                 clrline();
                 printf("\r");
                 //printf("%s", command_in);
                 printf("(wrong command or path type again):");
-                index = 0;
-                command_in[index] = '\0';
+                index1 = 0;
+                //command_in[index] = '\0';
             }
             //printf("%d", ans);
         }
         else {
             putchar(c);
-            command_in[index] = c;
-            index++;
-            command_in[index] = '\0';
+            command_in[index1] = c;
+            index1++;
+            command_in[index1] = '\0';
+            //printf(" %s",command_in);
         }
 
     }

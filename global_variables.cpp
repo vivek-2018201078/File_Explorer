@@ -24,4 +24,5 @@ int no_of_entries = 0;
 int mode = 0;
 int cursor_line = 0;
 char* absolute_home_path = get_current_dir_name();
+int index1 = 0;
 

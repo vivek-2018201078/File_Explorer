@@ -35,7 +35,7 @@ void clrscrn() {
 
 void deleteEnd (char* myStr){
 
-    printf ("%s\n", myStr);
+    //printf ("%s\n", myStr);
     char *del = &myStr[strlen(myStr)];
 
     while (del > myStr && *del != '/')
