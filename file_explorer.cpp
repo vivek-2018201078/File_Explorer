@@ -54,6 +54,8 @@ int main()
     ioctl(0, TIOCGWINSZ, &w);
     terminal_lines = w.ws_row;
     terminal_col = w.ws_col;
+    right_file_index = terminal_lines - 4;
+
     clrscrn();
     int c;
     vector<file_detail> file_details;
@@ -71,7 +73,7 @@ int main()
                 char new_directory[MAX];
                 if ((file_details[cursor_pos].isdir)) {
                     left_file_index = 0;
-                    right_file_index = 34;
+                    right_file_index = terminal_lines - 4;
                     if (cursor_pos == 0) {
                         continue;
                     }
@@ -94,9 +96,10 @@ int main()
                     clrscrn();
                     file_details = list_directory(curr_dir);
                     no_of_entries = file_details.size();
-                    printf("\033[%dA", terminal_lines - cursor_line + 2);
                     cursor_pos = 0;
                     cursor_line = 0;
+                    printf("\033[%dA", terminal_lines - cursor_line + 4);
+
                     continue;
 
                 } else {
@@ -147,7 +150,7 @@ int main()
             } else if (c == KEY_RIGHT) {   //// THIS IS ACTUALLY LEFT CHECK LATER
                 left_key_access = 1;
                 left_file_index = 0;
-                right_file_index = 34;
+                right_file_index = terminal_lines - 4;
                 if (curr_dir == home_dir)
                     continue;
                 if (!left_st.empty()) {
@@ -168,7 +171,7 @@ int main()
             } else if (c == KEY_LEFT) {
                 right_key_access = 1;
                 left_file_index = 0;
-                right_file_index = 34;
+                right_file_index = terminal_lines - 4;
                 if (!right_st.empty()) {
                     left_st.push(right_st.top());
                     if (!right_st.empty()) {
@@ -184,10 +187,10 @@ int main()
                     continue;
 
                 }
-            } else if (c == 127) {
+            } else if (c == 127) {                  //backspace
                 left_key_access = 1;
                 left_file_index = 0;
-                right_file_index = 34;
+                right_file_index = terminal_lines - 4;
                 if (strcmp(home_dir, curr_dir) != 0) {
                     deleteEnd(curr_dir);
                     char *temp = (char *) malloc(strlen(curr_dir));
@@ -197,7 +200,7 @@ int main()
                 clrscrn();
                 file_details = list_directory(curr_dir);
                 no_of_entries = file_details.size();
-                printf("\033[%dA", no_of_entries + 2);
+                printf("\033[%dA", terminal_lines - 1);
                 cursor_pos = 0;
                 cursor_line = 0;
                 continue;
@@ -219,7 +222,7 @@ int main()
 
                 }
             } else if (c == KEY_DOWN && cursor_pos < no_of_entries - 1) {
-                if (cursor_line <= 33) {
+                if (cursor_line <= terminal_lines - 5) {
                     cursordownward(1);
                     cursor_pos++;
                     cursor_line++;
@@ -231,23 +234,30 @@ int main()
                     }
                     clrscrn();
                     file_details = list_directory(curr_dir);
-                    printf("\033[%dA", terminal_lines - cursor_line - 1);
+                    printf("\033[%dA", terminal_lines - cursor_line  - 1);
 
 
 
                 }
-            } else if (c == 58) {
+            } else if (c == 58) {                //press :
                 mode = 1;
                 cursordownward(terminal_lines - cursor_line);
                 printf("\033[2K");
                 printf(":");
                 command_mode();
 
+            } else if (c == 104) {              //press h for home
+                //printf("here");
+                clrscrn();
+                curr_dir = home_dir;
+                file_details = list_directory(curr_dir);
+                left_st.push(curr_dir);
+                no_of_entries = file_details.size();
+                printf("\033[%dA", terminal_lines - 1);
             }
         }
-    else {
-
-    }
+        else {
+        }
     }
     return 0;
 }

@@ -71,11 +71,15 @@ int kbget(void)
     int c;
 
     c = getch();
+    //printf("%d", c);
     if(c == 127) {
         return c;
 
     }
     if(c == 58) {
+        return c;
+    }
+    if(c == 104 && mode == 0) {
         return c;
     }
 

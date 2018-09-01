@@ -5,6 +5,9 @@
 #include <string>
 #include <string.h>
 #include <vector>
+#include <sys/ioctl.h>
+
+
 using namespace std;
 
 #ifndef OS_ASSIGNMENT_GLOBAL_VARIABLES_H
@@ -30,6 +33,7 @@ extern int no_of_entries;
 extern int terminal_lines;
 extern int terminal_col;
 extern int cursor_line;
+extern char* absolute_home_path;
 
 
 #endif //OS_ASSIGNMENT_GLOBAL_VARIABLES_H
