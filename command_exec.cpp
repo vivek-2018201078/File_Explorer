@@ -10,6 +10,9 @@
 #include <fcntl.h>
 #include "global_variables.h"
 #include <stdio.h>
+#include <unistd.h>
+#include <dirent.h>
+#include <queue>
 
 /*#define COPY            "copy"
 #define MOVE            "move"
@@ -18,6 +21,7 @@
 #define CREATE_DIR      "create_dir"
 #def*/
 
+using namespace std;
 
 int command_exec(char* command_input) {
     //int index1 = 0;
@@ -42,7 +46,7 @@ int command_exec(char* command_input) {
             char filepath[1000];
             //strcpy(filepath, absolute_home_path);
             //strcat(filepath,"/");
-            strcpy(filepath, curr_dir);
+            strcpy(filepath, home_dir);
             strcat(filepath,"/");
             if(all_tokens[2][0] == '~') {
                 (all_tokens[2])++;
@@ -71,7 +75,7 @@ int command_exec(char* command_input) {
             char filepath[1000];
             //strcpy(filepath, absolute_home_path);
             //strcat(filepath,"/");
-            strcpy(filepath, curr_dir);
+            strcpy(filepath, home_dir);
             strcat(filepath,"/");
             if(all_tokens[2][0] == '~') {
                 (all_tokens[2])++;
@@ -115,21 +119,93 @@ int command_exec(char* command_input) {
     }
 
     if(strcmp(all_tokens[0], "delete_file") == 0) {
-        char to_delete[1000];
-        strcpy(to_delete, absolute_home_path);
-        strcat(to_delete, "/");
-        strcat(to_delete, curr_dir);
-        strcat(to_delete,"/");
-        strcat(to_delete, all_tokens[1]);
-        //printf("%s", to_delete);
-        int ans = remove(to_delete);
-        if(ans == 0)
-            return 1;
-        else
+        if(all_tokens.size() != 2) {
             return 0;
-
+        }
+        else {
+            char to_delete[1000];
+            strcpy(to_delete, absolute_home_path);
+            strcat(to_delete, "/");
+            strcat(to_delete, curr_dir);
+            strcat(to_delete, "/");
+            strcat(to_delete, all_tokens[1]);
+            //printf("%s", to_delete);
+            int ans = remove(to_delete);
+            if (ans == 0)
+                return 1;
+            else
+                return 0;
+        }
     }
-    
+
+    /*if(strcmp(all_tokens[0], "copy") == 0) {
+
+
+    }*/
+
+    if(strcmp(all_tokens[0], "snapshot") == 0) {
+        //printf("here1");
+        if(all_tokens.size() != 3) {
+            return 0;
+        }
+        else {
+            //printf("here2");
+            queue <char*> q;
+            FILE *fp;
+            fp = fopen(all_tokens[2], "w+");
+            if(fp == NULL)
+                printf("cant open file");
+            char stat_path[1000];
+            strcpy(stat_path, home_dir);
+            strcat(stat_path, "/");
+            strcat(stat_path, all_tokens[1]);
+            q.push(stat_path);
+            //printf("%s",q.front());
+            struct stat file_stat;
+            while(!q.empty()) {
+                //printf("here");
+                //printf("\nin while %s", q.front());
+                fputs("\n", fp);
+                fputs(q.front(), fp);
+                fputs(":", fp);
+                fputs("\n", fp);
+                struct dirent **file_list;
+                int no_of_entries;
+                char scan_path[1000];
+                strcpy(scan_path, q.front());
+                //printf("\nfront =  %s ", q.front());
+                q.pop();
+                no_of_entries = scandir(scan_path, &file_list, NULL, alphasort);
+                //printf(" entries =  %d\n", no_of_entries);
+                for(int i = 0; i < no_of_entries; i++) {
+                    char arr[1000];
+                    strcpy(arr, scan_path);
+                    //printf("%s ", scan_path);
+                    //printf("x = %s\n", file_list[i]->d_name);
+                    strcat(arr, "/");
+                    strcat(arr, file_list[i]->d_name);
+
+                    stat(arr, &file_stat);
+                    if(S_ISDIR(file_stat.st_mode) && (strcmp(file_list[i]->d_name, ".") != 0) && (strcmp(file_list[i]->d_name, "..") != 0)) {
+                        //printf("dir = %s\n", arr);
+                        char dir[1000][1000];
+                        strcpy(dir[i], arr);
+                        //memset(dir, 0, 255);
+                        //printf("\n dir = %s", dir);
+                        q.push(dir[i]);
+                        //printf("\n%s", q.front());
+                    }
+                    else if(S_ISREG(file_stat.st_mode)) {
+                        //printf("file = %s\n", arr);
+                        fputs(file_list[i]->d_name, fp);
+                        fputs("\t", fp);
+                    }
+                }
+            }
+            fclose(fp);
+            return 1;
+        }
+    }
 
    return 0;
 
