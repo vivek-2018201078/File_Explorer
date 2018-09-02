@@ -26,9 +26,6 @@
 
 using namespace std;
 
-stack <char*> left_st;
-stack <char*> right_st;
-
 void clrscrn() {
     printf("\033c");
 }

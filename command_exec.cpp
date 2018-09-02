@@ -13,13 +13,11 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <queue>
+#include <fstream>
+#include <dirent.h>
+#include "file_copy.h"
+#include "copy_dir.h"
 
-/*#define COPY            "copy"
-#define MOVE            "move"
-#define RENAME          "rename"
-#define CREATE_FILE     "create_file"
-#define CREATE_DIR      "create_dir"
-#def*/
 
 using namespace std;
 
@@ -27,25 +25,25 @@ int command_exec(char* command_input) {
     //int index1 = 0;
     char* token;
     char* input = command_input;
-    //printf(" %s", command_input);
+    if(backspace_pressed == 1)
+        input++;
+    backspace_pressed = 0;
     vector<char*> all_tokens;
     int length = strlen(command_input);
+    if(length == 0){
+        return 0;
+    }
     while((token = strtok_r(input, " ", &input)))
         all_tokens.push_back(token);
 
 
-    //printf(" %s %s %s", all_tokens[0], all_tokens[1], all_tokens[2]);
-
     if(strcmp(all_tokens[0], "create_file") == 0) {
-        //printf(" here");
         if(all_tokens.size() != 3) {
             return 0;
         }
         else {
             mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
             char filepath[1000];
-            //strcpy(filepath, absolute_home_path);
-            //strcat(filepath,"/");
             strcpy(filepath, home_dir);
             strcat(filepath,"/");
             if(all_tokens[2][0] == '~') {
@@ -55,14 +53,11 @@ int command_exec(char* command_input) {
             strcpy(filepath,all_tokens[2]);
             strcat(filepath,"/");
             strcat(filepath, all_tokens[1]);
-            //printf("%s", filepath);
             int fd = creat(filepath, mode);
             if(fd == -1)
                 return 0;
             else
                 return 1;
-            //printf(" fd = %d", fd);
-            return 1;
         }
     }
 
@@ -73,8 +68,6 @@ int command_exec(char* command_input) {
         else {
             mode_t mode = S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH ;
             char filepath[1000];
-            //strcpy(filepath, absolute_home_path);
-            //strcat(filepath,"/");
             strcpy(filepath, home_dir);
             strcat(filepath,"/");
             if(all_tokens[2][0] == '~') {
@@ -84,14 +77,12 @@ int command_exec(char* command_input) {
             strcat(filepath,all_tokens[2]);
             strcat(filepath,"/");
             strcat(filepath, all_tokens[1]);
-            //printf("%s", filepath);
+            printf(" %s ", filepath);
             int fd = mkdir(filepath, mode);
             if(fd == -1)
                 return 0;
             else
                 return 1;
-            //printf(" fd = %d", fd);
-            return 1;
         }
     }
 
@@ -138,18 +129,60 @@ int command_exec(char* command_input) {
         }
     }
 
-    /*if(strcmp(all_tokens[0], "copy") == 0) {
+    if(strcmp(all_tokens[0], "copy") == 0) {
+        if(all_tokens.size() < 3) {
+            return 0;
+        }
+        else {
+            int i = 0;
+            while(i < (all_tokens.size() - 2)) {
+                char abs_file_name[1000];
+                char directory_name[1000];
+                strcpy(abs_file_name, curr_dir);
+                strcat(abs_file_name, "/");
+                strcat(abs_file_name, all_tokens[i+1]);
+
+                strcpy(directory_name, home_dir);
+                strcat(directory_name,"/");
+                if(all_tokens[all_tokens.size() - 1][0] == '~') {
+                    all_tokens[all_tokens.size() - 1]++;
+                    all_tokens[all_tokens.size() - 1]++;
+                }
+                strcat(directory_name, all_tokens[all_tokens.size() - 1]);
+                strcat(directory_name, "/");
+                strcat(directory_name, all_tokens[i + 1]);
+
+                struct stat details;
+                stat(abs_file_name, &details);
+                if(S_ISREG(details.st_mode)) {
+                    file_copy(abs_file_name, directory_name);
+                }
 
 
-    }*/
+                if(S_ISDIR(details.st_mode)) {
+                    char directory_name_passed[1000];
+                    char copied_to[1000];
+                    char dir_name[1000];
+                    strcpy(dir_name, all_tokens[i + 1]);
+                    strcpy(directory_name_passed, abs_file_name);
+                    strcpy(copied_to, directory_name);
+                    copy_dir(directory_name_passed, copied_to, dir_name);
+                }
+
+                i++;
+            }
+
+
+            return 1;
+        }
+
+    }
 
     if(strcmp(all_tokens[0], "snapshot") == 0) {
-        //printf("here1");
         if(all_tokens.size() != 3) {
             return 0;
         }
         else {
-            //printf("here2");
             queue <char*> q;
             FILE *fp;
             fp = fopen(all_tokens[2], "w+");
@@ -160,11 +193,8 @@ int command_exec(char* command_input) {
             strcat(stat_path, "/");
             strcat(stat_path, all_tokens[1]);
             q.push(stat_path);
-            //printf("%s",q.front());
             struct stat file_stat;
             while(!q.empty()) {
-                //printf("here");
-                //printf("\nin while %s", q.front());
                 fputs("\n", fp);
                 fputs(q.front(), fp);
                 fputs(":", fp);
@@ -173,30 +203,21 @@ int command_exec(char* command_input) {
                 int no_of_entries;
                 char scan_path[1000];
                 strcpy(scan_path, q.front());
-                //printf("\nfront =  %s ", q.front());
                 q.pop();
                 no_of_entries = scandir(scan_path, &file_list, NULL, alphasort);
-                //printf(" entries =  %d\n", no_of_entries);
                 for(int i = 0; i < no_of_entries; i++) {
                     char arr[1000];
                     strcpy(arr, scan_path);
-                    //printf("%s ", scan_path);
-                    //printf("x = %s\n", file_list[i]->d_name);
                     strcat(arr, "/");
                     strcat(arr, file_list[i]->d_name);
 
                     stat(arr, &file_stat);
                     if(S_ISDIR(file_stat.st_mode) && (strcmp(file_list[i]->d_name, ".") != 0) && (strcmp(file_list[i]->d_name, "..") != 0)) {
-                        //printf("dir = %s\n", arr);
                         char dir[1000][1000];
                         strcpy(dir[i], arr);
-                        //memset(dir, 0, 255);
-                        //printf("\n dir = %s", dir);
                         q.push(dir[i]);
-                        //printf("\n%s", q.front());
                     }
                     else if(S_ISREG(file_stat.st_mode)) {
-                        //printf("file = %s\n", arr);
                         fputs(file_list[i]->d_name, fp);
                         fputs("\t", fp);
                     }
@@ -206,6 +227,32 @@ int command_exec(char* command_input) {
             return 1;
         }
     }
+
+    /*if(strcmp(all_tokens[0], "goto") == 0){
+        if(all_tokens.size() != 2)
+            return 0;
+        else {
+            char path[1000];
+            if(strcmp(all_tokens[1], "/") == 0){
+                strcpy(path, ".");
+            } else {
+                strcpy(path, ".");
+                strcat(path, "/");
+                if (all_tokens[1][0] == '/')
+                    all_tokens[1]++;
+                strcat(path, all_tokens[1]);
+            }
+            struct stat directory_stat;
+            int a = stat(path, &directory_stat);
+            if(a == -1)
+                return 0;
+            curr_dir = path;
+            return 2;
+        }
+
+    }*/
+
+
 
    return 0;
 

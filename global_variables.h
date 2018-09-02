@@ -6,6 +6,7 @@
 #include <string.h>
 #include <vector>
 #include <sys/ioctl.h>
+#include <stack>
 
 
 using namespace std;
@@ -35,6 +36,9 @@ extern int terminal_col;
 extern int cursor_line;
 extern char* absolute_home_path;
 extern int index1;
+extern stack <char*> left_st;
+extern stack <char*> right_st;
+extern int backspace_pressed;
 
 
 #endif //OS_ASSIGNMENT_GLOBAL_VARIABLES_H

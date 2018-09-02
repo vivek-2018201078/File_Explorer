@@ -25,4 +25,6 @@ int mode = 0;
 int cursor_line = 0;
 char* absolute_home_path = get_current_dir_name();
 int index1 = 0;
-
+stack <char*> left_st;
+stack <char*> right_st;
+int backspace_pressed = 0;
