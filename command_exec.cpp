@@ -17,6 +17,7 @@
 #include <dirent.h>
 #include "file_copy.h"
 #include "copy_dir.h"
+#include "delete_dir.h"
 
 
 using namespace std;
@@ -115,10 +116,14 @@ int command_exec(char* command_input) {
         }
         else {
             char to_delete[1000];
-            strcpy(to_delete, absolute_home_path);
+            //strcpy(to_delete, absolute_home_path);
+            //strcat(to_delete, "/");
+            strcpy(to_delete, home_dir);
             strcat(to_delete, "/");
-            strcat(to_delete, curr_dir);
-            strcat(to_delete, "/");
+            if(all_tokens[1][0] == '~') {
+                all_tokens[1]++;
+                all_tokens[1]++;
+            }
             strcat(to_delete, all_tokens[1]);
             //printf("%s", to_delete);
             int ans = remove(to_delete);
@@ -127,6 +132,21 @@ int command_exec(char* command_input) {
             else
                 return 0;
         }
+    }
+
+    if(strcmp(all_tokens[0], "delete_dir") == 0) {
+        if(all_tokens.size() != 2)
+            return 0;
+        char dir_delete_path[1000];
+        strcpy(dir_delete_path, home_dir);
+        strcat(dir_delete_path, "/");
+        if(all_tokens[1][0] == '~'){
+            all_tokens[1]++;
+            all_tokens[1]++;
+        }
+        strcat(dir_delete_path, all_tokens[1]);
+        delete_dir(dir_delete_path);
+        return 1;
     }
 
     if(strcmp(all_tokens[0], "copy") == 0) {
@@ -251,6 +271,8 @@ int command_exec(char* command_input) {
         }
 
     }*/
+
+
 
 
 

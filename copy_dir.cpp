@@ -21,7 +21,7 @@
 using namespace std;
 
 void copy_dir(char* directory_path , char* destination, char* dirname) {
-    //printf("%s %s %s", directory_path, destination, dirname);
+    //  printf("%s %s %s", directory_path, destination, dirname);
     //strcpy(directory_path, directory_name);
     //strcat(directory_path, "/");
     //strcat(directory_path, all_tokens[i + 1]);
