@@ -34,7 +34,7 @@ void file_copy(char* file_name, char* destination) {
     strcat(directory_name, "/");
     strcat(directory_name, file_name);*/
 
-    printf(" %s %s ", file_name, destination);
+    //printf(" %s %s ", file_name, destination);
 
     source = fopen(file_name, "r");
     if(source == NULL)
