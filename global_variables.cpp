@@ -28,3 +28,4 @@ int index1 = 0;
 stack <char*> left_st;
 stack <char*> right_st;
 int backspace_pressed = 0;
+

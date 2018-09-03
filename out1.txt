@@ -1,7 +1,0 @@
-
-././new:
-he.he	
-././new/new2:
-
-././new/new2/new3:
-inside.txt	

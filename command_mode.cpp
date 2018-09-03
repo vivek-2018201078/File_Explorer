@@ -6,6 +6,7 @@
 #include "global_variables.h"
 #include "command_exec.h"
 #include "list_directory.h"
+#include <vector>
 
 #define MAX 1000
 
@@ -14,7 +15,7 @@ void clrline() {
 }
 
 
-void command_mode() {
+vector<file_detail> command_mode() {
 
     char command_in[MAX];       //command is stored
     int ans;
@@ -74,6 +75,10 @@ void command_mode() {
 
     }
     printf("\033c");
+    cursor_pos = 0;
+    cursor_line = 0;
+    left_file_index = 0;
+    right_file_index = terminal_lines - 4;
     vector<file_detail>file_names;
     file_names = list_directory(curr_dir);
     if(ans == 2)
@@ -95,6 +100,6 @@ void command_mode() {
             printf("\033[%dB", cursor_line);
         }
     }
-
+    return file_names;
 
 }

@@ -62,7 +62,7 @@ int main()
     printf("\033[%dA", terminal_lines - cursor_line + 2);
 
 
-    while(1) {
+    while (1) {
         if (mode == 0) {
             c = kbget();
 
@@ -141,7 +141,6 @@ int main()
                     continue;
 
                 }
-
 
 
             } else if (c == KEY_RIGHT) {   //// THIS IS ACTUALLY LEFT CHECK LATER
@@ -231,8 +230,7 @@ int main()
                     }
                     clrscrn();
                     file_details = list_directory(curr_dir);
-                    printf("\033[%dA", terminal_lines - cursor_line  - 1);
-
+                    printf("\033[%dA", terminal_lines - cursor_line - 1);
 
 
                 }
@@ -241,7 +239,7 @@ int main()
                 cursordownward(terminal_lines - cursor_line);
                 printf("\033[2K");
                 printf(":");
-                command_mode();
+                file_details = command_mode();
 
             } else if (c == 104) {              //press h for home
                 //printf("here");
@@ -252,8 +250,7 @@ int main()
                 no_of_entries = file_details.size();
                 printf("\033[%dA", terminal_lines - 1);
             }
-        }
-        else {
+        } else {
         }
     }
     return 0;

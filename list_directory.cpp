@@ -100,6 +100,7 @@ vector<file_detail> list_directory(char* pathname) {
     }
     printf("--------------------------------------------------------------------------------\n");
 
+
     printf("Current Directory : %.30s\n", pathname);
     return file_names;
 }

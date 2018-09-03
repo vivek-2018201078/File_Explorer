@@ -44,7 +44,8 @@ void delete_dir(char* dir_path) {
         else {
             int res = remove(file_iniside_dir);
         }
-        rmdir(dir_path);
+
     }
+    rmdir(dir_path);
 
 }
