@@ -63,6 +63,7 @@ Basic assumption
 1. terminal size is minimum 80 * 4
 2. Verical scrolling is possible for any terminal height except < 4
 3. wrap around is not possible therefor terminal width should be minimum 80
+4. Backspace in command work doesnt work like normal backspace. You have to write command again if you mistype after pressing backspace
 
 			 
 			
