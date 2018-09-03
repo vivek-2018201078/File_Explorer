@@ -1,6 +1,7 @@
 //
 // Created by vivek on 24/8/18.
-//
+////  ROLL NO. - 2018201078
+////  NAME - VIVEK PATARE
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
