@@ -83,6 +83,10 @@ int kbget(void)
         return c;
     }
 
+    if(c == 'q' && mode == 0) {
+        return c;
+    }
+
     return (c == KEY_ESCAPE) ? kbesc() : c;
 }
 

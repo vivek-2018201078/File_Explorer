@@ -245,12 +245,18 @@ int main()
                 //printf("here");
                 clrscrn();
                 curr_dir = home_dir;
+                cursor_line = 0;
+                cursor_pos = 0;
+                left_file_index = 0;
+                right_file_index = terminal_lines - 4;
                 file_details = list_directory(curr_dir);
                 left_st.push(curr_dir);
                 no_of_entries = file_details.size();
                 printf("\033[%dA", terminal_lines - 1);
             }
-        } else {
+            else if (c == 'q') {
+                break;
+            }
         }
     }
     return 0;
