@@ -47,15 +47,33 @@ int command_exec(char* command_input) {
         } else {
             mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
             char filepath[1000];
-            strcpy(filepath, home_dir);
-            strcat(filepath, "/");
+
             if (all_tokens[2][0] == '~') {
-                (all_tokens[2])++;
-                (all_tokens[2])++;
+                strcpy(filepath, home_dir);
+                strcat(filepath, "/");
+                if (all_tokens[2][0] == '~') {
+                    (all_tokens[2])++;
+                    (all_tokens[2])++;
+                }
+                strcpy(filepath, all_tokens[2]);
+                strcat(filepath, "/");
+                strcat(filepath, all_tokens[1]);
             }
-            strcpy(filepath, all_tokens[2]);
-            strcat(filepath, "/");
-            strcat(filepath, all_tokens[1]);
+            else if(all_tokens[2][0] == '/') {
+                strcpy(filepath, home_dir);
+                strcat(filepath, "/");
+                all_tokens[2]++;
+                strcpy(filepath, all_tokens[2]);
+                strcat(filepath, "/");
+                strcat(filepath, all_tokens[1]);
+            }
+            else {
+                strcpy(filepath, curr_dir);
+                strcat(filepath, "/");
+                strcat(filepath, all_tokens[2]);
+                strcat(filepath, "/");
+                strcat(filepath, all_tokens[1]);
+            }
             int fd = creat(filepath, mode);
             if (fd == -1)
                 return 0;
@@ -70,16 +88,29 @@ int command_exec(char* command_input) {
         } else {
             mode_t mode = S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH;
             char filepath[1000];
-            strcpy(filepath, home_dir);
-            strcat(filepath, "/");
             if (all_tokens[2][0] == '~') {
+                strcpy(filepath, home_dir);
+                strcat(filepath, "/");
                 (all_tokens[2])++;
                 (all_tokens[2])++;
+                strcpy(filepath, all_tokens[2]);
+                strcat(filepath, "/");
+                strcat(filepath, all_tokens[1]);
+            } else if(all_tokens[2][0] == '/') {
+                strcpy(filepath, home_dir);
+                strcat(filepath, "/");
+                (all_tokens[2])++;
+                strcpy(filepath, all_tokens[2]);
+                strcat(filepath, "/");
+                strcat(filepath, all_tokens[1]);
             }
-            strcat(filepath, all_tokens[2]);
-            strcat(filepath, "/");
-            strcat(filepath, all_tokens[1]);
-            printf(" %s ", filepath);
+            else {
+                strcpy(filepath, curr_dir);
+                strcat(filepath, "/");
+                strcat(filepath, all_tokens[2]);
+                strcat(filepath, "/");
+                strcat(filepath, all_tokens[1]);
+            }
             int fd = mkdir(filepath, mode);
             if (fd == -1)
                 return 0;
@@ -94,13 +125,40 @@ int command_exec(char* command_input) {
         } else {
             char rename_to[1000];
             char rename_from[1000];
-            strcpy(rename_to, curr_dir);
-            strcat(rename_to, "/");
-            strcat(rename_to, all_tokens[2]);
 
-            strcpy(rename_from, curr_dir);
-            strcat(rename_from, "/");
-            strcat(rename_from, all_tokens[1]);
+            if(all_tokens[2][0] == '~') {
+                strcpy(rename_to, home_dir);
+                all_tokens[2]++;
+                all_tokens[2]++;
+                strcat(rename_to, "/");
+                strcat(rename_to, all_tokens[2]);
+            } else if(all_tokens[2][0] == '/') {
+                strcpy(rename_to, home_dir);
+                all_tokens[2]++;
+                strcat(rename_to, "/");
+                strcat(rename_to, all_tokens[2]);
+            }
+            else {
+                strcpy(rename_to, curr_dir);
+                strcat(rename_to, "/");
+                strcat(rename_to, all_tokens[2]);
+            }
+            if(all_tokens[1][0] == '~') {
+                strcpy(rename_to, home_dir);
+                all_tokens[1]++;
+                all_tokens[1]++;
+                strcat(rename_to, "/");
+                strcat(rename_to, all_tokens[1]);
+            } else if(all_tokens[1][0] == '/') {
+                strcpy(rename_to, home_dir);
+                all_tokens[1]++;
+                strcat(rename_to, "/");
+                strcat(rename_to, all_tokens[1]);
+            } else {
+                strcpy(rename_from, curr_dir);
+                strcat(rename_from, "/");
+                strcat(rename_from, all_tokens[1]);
+            }
 
             int ans = rename(rename_from, rename_to);
             if (!ans)
@@ -115,16 +173,36 @@ int command_exec(char* command_input) {
             return 0;
         } else {
             char to_delete[1000];
+            if(all_tokens[1][0] == '~') {
+                strcpy(to_delete, home_dir);
+                strcat(to_delete, "/");
+                (all_tokens[1])++;
+                (all_tokens[1])++;
+                strcat(to_delete, all_tokens[1]);
+            }
+            else if(all_tokens[1][0] == '/') {
+                strcpy(to_delete, home_dir);
+                strcat(to_delete, "/");
+                (all_tokens[1])++;
+                strcat(to_delete, all_tokens[1]);
+            }
+            else {
+                strcpy(to_delete, curr_dir);
+                strcat(to_delete, "/");
+                strcat(to_delete, all_tokens[1]);
+            }
             //strcpy(to_delete, absolute_home_path);
             //strcat(to_delete, "/");
-            strcpy(to_delete, home_dir);
+
+            /*strcpy(to_delete, home_dir);
             strcat(to_delete, "/");
             if (all_tokens[1][0] == '~') {
                 all_tokens[1]++;
                 all_tokens[1]++;
             }
-            strcat(to_delete, all_tokens[1]);
+            strcat(to_delete, all_tokens[1]);*/
             //printf("%s", to_delete);
+
             int ans = remove(to_delete);
             if (ans == 0)
                 return 1;
@@ -137,13 +215,32 @@ int command_exec(char* command_input) {
         if (all_tokens.size() != 2)
             return 0;
         char dir_delete_path[1000];
-        strcpy(dir_delete_path, home_dir);
+        if(all_tokens[1][0] == '~') {
+            strcpy(dir_delete_path, home_dir);
+            strcat(dir_delete_path, "/");
+            (all_tokens[1])++;
+            (all_tokens[1])++;
+            strcat(dir_delete_path, all_tokens[1]);
+        }
+        else if(all_tokens[1][0] == '/') {
+            strcpy(dir_delete_path, home_dir);
+            strcat(dir_delete_path, "/");
+            (all_tokens[1])++;
+            strcat(dir_delete_path, all_tokens[1]);
+        }
+        else {
+            strcpy(dir_delete_path, curr_dir);
+            strcat(dir_delete_path, "/");
+            strcat(dir_delete_path, all_tokens[1]);
+        }
+
+        /*strcpy(dir_delete_path, home_dir);
         strcat(dir_delete_path, "/");
         if (all_tokens[1][0] == '~') {
             all_tokens[1]++;
             all_tokens[1]++;
         }
-        strcat(dir_delete_path, all_tokens[1]);
+        strcat(dir_delete_path, all_tokens[1]);*/
         delete_dir(dir_delete_path);
         return 1;
     }
