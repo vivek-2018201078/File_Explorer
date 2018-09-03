@@ -252,9 +252,15 @@ int command_exec(char* command_input) {
             if (fp == NULL)
                 printf("cant open file");
             char stat_path[1000];
-            strcpy(stat_path, home_dir);
-            strcat(stat_path, "/");
-            strcat(stat_path, all_tokens[1]);
+
+            if(strcmp(all_tokens[1], "/") == 0) {
+                strcpy(stat_path, home_dir);
+                strcat(stat_path, "/");
+            } else {
+                strcpy(stat_path, curr_dir);
+                strcat(stat_path, "/");
+                strcat(stat_path, all_tokens[1]);
+            }
             q.push(stat_path);
             struct stat file_stat;
             while (!q.empty()) {
@@ -284,14 +290,16 @@ int command_exec(char* command_input) {
                         fputs(file_list[i]->d_name, fp);
                         fputs("\t", fp);
                     }
+
                 }
+                fputs("\n", fp);
             }
             fclose(fp);
             return 1;
         }
     }
 
-/*    if (strcmp(all_tokens[0], "goto") == 0) {
+    /*if (strcmp(all_tokens[0], "goto") == 0) {
         if (all_tokens.size() != 2)
             return 0;
         char path[1000];
@@ -304,20 +312,9 @@ int command_exec(char* command_input) {
         int a = stat(path, &directory_stat);
         if (a == -1)
             return 0;
-        *//*curr_dir = path;
-        return 2;*//*
-        printf("\033c");
-        right_file_index = terminal_lines - 4;
-        int c;
-        vector<file_detail> file_details;
-        file_details = list_directory(path);
-        left_st.push(curr_dir);
-        no_of_entries = file_details.size();
-        printf("\033[%dA", terminal_lines - cursor_line + 2);
+        curr_dir = path;
         return 2;
 
-
-        return 0;
 
     }*/
 }
