@@ -1,1 +1,0 @@
-/usr/bin/c++  -g   CMakeFiles/Final.dir/file_explorer.cpp.o CMakeFiles/Final.dir/global_variables.cpp.o CMakeFiles/Final.dir/list_directory.cpp.o CMakeFiles/Final.dir/raw_input.cpp.o  -o Final 

@@ -1,6 +1,6 @@
 Terminal Based File Explorer
 
-A file exploer which works in 2 modes
+A file explorer which works in 2 modes
 1. normal mode
 2.command mode
 Application starts in Normal mode
@@ -64,6 +64,9 @@ Basic assumption
 2. Verical scrolling is possible for any terminal height except < 4
 3. wrap around is not possible therefor terminal width should be minimum 80
 4. Backspace in command work doesnt work like normal backspace. You have to write command again if you mistype after pressing backspace
+5. kbget function from reference book is used with modifications for getting keyboard input.
+6. command entered should be sufficient for 1 line and should not overflow (may mess up cursor position)
+
 
 			 
 			

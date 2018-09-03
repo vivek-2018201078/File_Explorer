@@ -1,3 +1,0 @@
-/home/vivek/OS_Assignment/Final/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/vivek/OS_Assignment/Final/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/vivek/OS_Assignment/Final/cmake-build-debug/CMakeFiles/Final.dir

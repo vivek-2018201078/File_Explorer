@@ -32,7 +32,6 @@ void clrscrn() {
 
 void deleteEnd (char* myStr){
 
-    //printf ("%s\n", myStr);
     char *del = &myStr[strlen(myStr)];
 
     while (del > myStr && *del != '/')
@@ -242,7 +241,6 @@ int main()
                 file_details = command_mode();
 
             } else if (c == 104) {              //press h for home
-                //printf("here");
                 clrscrn();
                 curr_dir = home_dir;
                 cursor_line = 0;
